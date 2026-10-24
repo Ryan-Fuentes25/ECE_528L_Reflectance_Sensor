@@ -14,6 +14,27 @@
 
 void Print_Binary(uint8_t value_to_convert)
 {
-    // Your Print_Binary function implementation goes here
+     // if the value is 0, just print all zeros and leave
+    if (value_to_convert == 0)
+    {
+        printf("Line Sensor: 0000_0000\n");
+        return;
+    }
+
+    printf("Line Sensor: ");
+
+    // go from bit 7 down to bit 0
+    for (int bit = 7; bit >= 0; bit--)
+    {
+        printf("%d", (value_to_convert >> bit) & 1);
+
+        // underscore after the 4th bit
+        if (bit == 4)
+        {
+            printf("_");
+        }
+    }
+
+    printf("\n");
 
 }

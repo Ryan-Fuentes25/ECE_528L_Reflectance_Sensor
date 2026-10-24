@@ -21,6 +21,8 @@
 #include "inc/Reflectance_Sensor.h"
 #include "inc/Print_Binary.h"
 
+void Detect_Line_Position(uint8_t reflectance_sensor_data);
+
 int main(void)
 {
     // Initialize the 48 MHz Clock
@@ -43,6 +45,93 @@ int main(void)
     {
         reflectance_sensor_data = Reflectance_Sensor_Read(1000);
         Print_Binary(reflectance_sensor_data);
+        Detect_Line_Position(reflectance_sensor_data);
         Clock_Delay1ms(10);
+    }
+}
+
+void Detect_Line_Position(uint8_t reflectance_sensor_data)
+{
+    switch(reflectance_sensor_data)
+    {
+        // Center
+        case 0x18:
+        {
+            LED1_Output(RED_LED_OFF);
+            LED2_Output(RGB_LED_GREEN);
+            break;
+        }
+
+        // Slightly left from center
+        case 0x1C:
+        {
+            LED1_Output(RED_LED_OFF);
+            LED2_Output(RGB_LED_YELLOW);
+            break;
+        }
+
+        // Slightly right from center
+        case 0x38:
+        {
+            LED1_Output(RED_LED_OFF);
+            LED2_Output(RGB_LED_PINK);
+            break;
+        }
+
+        // Far left from center
+        case 0x01:
+        {
+            LED1_Output(RED_LED_OFF);
+            LED2_Output(RGB_LED_WHITE);
+            break;
+        }
+
+        // Far right from center
+        case 0x80:
+        {
+            LED1_Output(RED_LED_OFF);
+            LED2_Output(RGB_LED_SKY_BLUE);
+            break;
+        }
+
+        // Left turn
+        case 0xF8:
+        {
+            LED1_Output(RED_LED_ON);
+            LED2_Output(RGB_LED_WHITE);
+            break;
+        }
+
+        // Right turn
+        case 0x1F:
+        {
+            LED1_Output(RED_LED_ON);
+            LED2_Output(RGB_LED_SKY_BLUE);
+            break;
+        }
+
+        // T-intersection
+        case 0xFF:
+        {
+            LED1_Output(RED_LED_OFF);
+            LED2_Output(RGB_LED_BLUE);
+            break;
+        }
+
+        // Dead end
+        case 0x00:
+        {
+            LED1_Output(RED_LED_OFF);
+            LED2_Output(RGB_LED_RED);
+            break;
+        }
+
+        // Anything else, keep the LEDs off
+        default:
+        {
+            LED1_Output(RED_LED_OFF);
+            LED2_Output(RGB_LED_OFF);
+            break;
+        }
     }
 }
